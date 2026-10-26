@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Gratis kvalitetschecklista på svenska för appar byggda med AI-verktyg som Lovable, Claude Code och Bolt.">
+<title>Lanseringskollen</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: ett besiktningsprotokoll. Smal läskolumn, kontrollpunkter i grupper, betyget fäst längst ner som en stämpel. */
+:root{
+  --bg:#f3f4f6; --paper:#ffffff; --ink:#17202e; --muted:#5b6575; --line:#dde1e8;
+  --accent:#1f4fd6; --accent-soft:#e6ecfc;
+  --crit:#c2381f; --crit-soft:#fbe9e5; --warn:#a86a00; --warn-soft:#fbf1dc; --ok:#1d7a45; --ok-soft:#e3f3e9;
+  --display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body:"IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --mono:"IBM Plex Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f141c; --paper:#171e29; --ink:#e7ebf2; --muted:#9aa4b4; --line:#2a3342;
+  --accent:#7fa2ff; --accent-soft:#1c2a4d;
+  --crit:#ff8b73; --crit-soft:#3a1d17; --warn:#f0b54d; --warn-soft:#33270f; --ok:#5fd08f; --ok-soft:#14301f;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f141c; --paper:#171e29; --ink:#e7ebf2; --muted:#9aa4b4; --line:#2a3342;
+  --accent:#7fa2ff; --accent-soft:#1c2a4d;
+  --crit:#ff8b73; --crit-soft:#3a1d17; --warn:#f0b54d; --warn-soft:#33270f; --ok:#5fd08f; --ok-soft:#14301f;
+  color-scheme:dark}
+*{box-sizing:border-box}
+html{padding-top:env(safe-area-inset-top,0px)}
+body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.55;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-block:0 140px}
+.wrap{max-width:680px;margin:0 auto;display:grid;gap:28px}
+header{padding-block:36px 4px;display:grid;gap:12px}
+.eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent)}
+h1{font-family:var(--display);font-weight:800;font-size:clamp(2.2rem,8vw,3.4rem);line-height:1;margin:0;letter-spacing:-.02em;text-wrap:balance}
+.lede{margin:0;color:var(--muted);max-width:60ch}
+.legend{display:flex;flex-wrap:wrap;gap:8px 16px;font-size:13px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.dot{width:9px;height:9px;border-radius:2px;display:inline-block}
+.d-crit{background:var(--crit)} .d-warn{background:var(--warn)} .d-nice{background:var(--muted)}
+section.group{display:grid;gap:10px}
+.group h2{font-family:var(--display);font-weight:600;font-size:1.3rem;margin:0;display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.group h2 small{font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:500;font-variant-numeric:tabular-nums}
+.item{background:var(--paper);border:1px solid var(--line);border-left:4px solid var(--line);border-radius:6px;padding:14px 14px 12px;display:grid;gap:8px}
+.item.sev-crit{border-left-color:var(--crit)} .item.sev-warn{border-left-color:var(--warn)} .item.sev-nice{border-left-color:var(--muted)}
+.q{font-weight:600;margin:0}
+.why{font-size:14px;color:var(--muted);margin:0}
+.why b{color:var(--ink);font-weight:600}
+.ans{display:flex;gap:8px;flex-wrap:wrap}
+.ans button{font:500 14px var(--body);padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;min-width:64px}
+.ans button:hover{border-color:var(--accent)}
+.ans button:focus-visible,.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.ans button[aria-pressed="true"].yes{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.ans button[aria-pressed="true"].no{background:var(--crit-soft);border-color:var(--crit);color:var(--crit)}
+.ans button[aria-pressed="true"].dk{background:var(--warn-soft);border-color:var(--warn);color:var(--warn)}
+#results{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:20px;display:grid;gap:14px}
+#results h2{font-family:var(--display);font-size:1.5rem;margin:0}
+.verdict{font-family:var(--display);font-weight:800;font-size:1.8rem;margin:0;line-height:1.1}
+.todo{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.todo li{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:start;font-size:15px}
+.tag{font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;padding:2px 7px;border-radius:4px;white-space:nowrap}
+.t-crit{background:var(--crit-soft);color:var(--crit)} .t-warn{background:var(--warn-soft);color:var(--warn)} .t-nice{background:var(--bg);color:var(--muted)}
+.disclaimer{font-size:13px;color:var(--muted);border-top:1px solid var(--line);padding-top:14px;margin:0}
+.btn{font:600 14px var(--body);padding:9px 16px;border-radius:6px;border:1px solid var(--line);background:transparent;color:var(--ink);cursor:pointer;justify-self:start}
+.btn:hover{border-color:var(--accent)}
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:5;background:var(--paper);border-top:1px solid var(--line);
+  padding-left:max(16px, env(safe-area-inset-left, 0px));padding-right:max(16px, env(safe-area-inset-right, 0px));padding-top:12px;padding-bottom:calc(12px + env(safe-area-inset-bottom, 0px))}
+.bar-in{max-width:680px;margin:0 auto;display:flex;align-items:center;gap:16px}
+.score{font-family:var(--display);font-weight:800;font-size:2rem;line-height:1;font-variant-numeric:tabular-nums;min-width:3.2ch}
+.meter{flex:1;min-width:0;display:grid;gap:6px}
+.track{height:8px;background:var(--line);border-radius:99px;overflow:hidden}
+.fill{height:100%;width:0;background:var(--accent);transition:width .3s ease}
+.meta{font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums}
+.bar a{font:600 14px var(--body);color:var(--accent);text-decoration:none;white-space:nowrap}
+@media (prefers-reduced-motion: reduce){.fill{transition:none}}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Kvalitetskontroll före lansering</div>
+    <h1>Lanseringskollen</h1>
+    <p class="lede">Har du byggt en app med Lovable, Claude Code, Bolt eller ett liknande AI-verktyg? Gå igenom 25 kontrollpunkter innan du släpper den. Svara ärligt. "Vet ej" räknas som nej.</p>
+    <div class="legend" aria-label="Förklaring av prioritet">
+      <span><i class="dot d-crit"></i>Stoppunkt, måste vara klar</span>
+      <span><i class="dot d-warn"></i>Viktig</span>
+      <span><i class="dot d-nice"></i>Bra att ha</span>
+    </div>
+  </header>
+
+  <div id="list"></div>
+
+  <section id="results" aria-live="polite">
+    <h2>Ditt resultat</h2>
+    <p class="verdict" id="verdict">Börja svara ovanför</p>
+    <p id="summary" class="why">Resultatet uppdateras medan du svarar.</p>
+    <ul class="todo" id="todo"></ul>
+    <button class="btn" id="reset" type="button">Börja om</button>
+    <p class="disclaimer">Detta är en kvalitetschecklista, inte en säkerhetsgranskning eller juridisk rådgivning. Hanterar appen hälsodata, betalningar eller känsliga uppgifter bör en expert granska den. Dina svar sparas bara i din egen webbläsare.</p>
+  </section>
+</div>
+
+<div class="bar">
+  <div class="bar-in">
+    <div class="score" id="score">0%</div>
+    <div class="meter">
+      <div class="track"><div class="fill" id="fill"></div></div>
+      <div class="meta" id="meta">0 av 25 besvarade</div>
+    </div>
+    <a href="#results">Se resultat</a>
+  </div>
+</div>
+
+<script>
+const GROUPS=[
+ {name:"Personuppgifter och GDPR",items:[
+  ["crit","Vet du exakt vilka personuppgifter appen samlar in?","Namn, e-post, IP-adress och betalinfo räknas alla. Du kan inte skydda det du inte vet att du har."],
+  ["crit","Finns en integritetspolicy som förklarar vad du sparar, varför och hur länge?","Samlar du in personuppgifter i EU måste användaren få veta det på ett begripligt sätt."],
+  ["warn","Samlar du bara in det du faktiskt behöver?","Varje extra fält är mer att skydda. Fråga inte efter telefonnummer om du aldrig ringer."],
+  ["warn","Kan en användare få sina uppgifter raderade?","Användare har rätt att be om radering. Det ska gå att göra utan att du gräver i databasen för hand."],
+  ["warn","Vet du i vilket land dina data lagras?","Lagring utanför EU kräver extra hänsyn. Kolla inställningarna hos din databas- och hostingtjänst."]
+ ]},
+ {name:"Cookies och spårning",items:[
+  ["warn","Vet du vilka cookies och spårningsskript sidan använder?","Analysverktyg, chattwidgets och inbäddade videor sätter ofta cookies utan att du märker det."],
+  ["crit","Ber du om samtycke innan cookies som inte är nödvändiga sätts?","Gäller t.ex. analys och annonser. Använder du inga sådana kan du svara ja."],
+  ["warn","Kan besökaren säga nej lika enkelt som ja?","En gömd nej-knapp är ett vanligt fel. Båda valen ska vara lika lätta att hitta."]
+ ]},
+ {name:"Inloggning och åtkomst",items:[
+  ["crit","Ser en inloggad användare bara sina egna uppgifter?","<b>Testa:</b> skapa två konton och försök se det ena kontots data från det andra. Det här är det vanligaste allvarliga felet i AI-byggda appar."],
+  ["crit","Är adminsidor skyddade från vanliga användare?","Att en knapp är gömd räcker inte. Prova att skriva in adressen till adminsidan när du är inloggad som vanlig användare."],
+  ["warn","Använder appen säker inloggning?","Färdig inloggning via Google eller e-postlänk är oftast säkrare än egna lösenordslösningar."],
+  ["nice","Begränsas upprepade inloggningsförsök?","Skyddar mot att någon gissar lösenord tusentals gånger i rad."]
+ ]},
+ {name:"Hemliga nycklar och kostnader",items:[
+  ["crit","Ligger API-nycklar och lösenord utanför koden som syns i webbläsaren?","Allt som körs i webbläsaren kan läsas av vem som helst. Nycklar hör hemma på servern eller i miljövariabler."],
+  ["crit","Har du kollat att inga nycklar finns i ett publikt GitHub-repo?","Robotar söker igenom GitHub efter läckta nycklar dygnet runt. Byt nyckeln direkt om den har legat ute."],
+  ["warn","Har dyra tjänster en kostnadsgräns eller budgetvarning?","AI-anrop och e-posttjänster kan bli dyra snabbt om någon missbrukar appen."]
+ ]},
+ {name:"Databas och säkerhetskopior",items:[
+  ["crit","Är databasens åtkomstregler påslagna?","I Supabase heter det Row Level Security. Utan regler kan vem som helst med rätt adress läsa hela databasen."],
+  ["warn","Finns säkerhetskopior, och har du testat att återställa en?","En säkerhetskopia du aldrig har testat är bara en förhoppning."],
+  ["warn","Kontrolleras det som skickas in via formulär?","Appen ska avvisa tomma fält, orimliga värden och kod som någon försöker smyga in."]
+ ]},
+ {name:"Testning och drift",items:[
+  ["warn","Har du testat appen på både mobil och dator?","De flesta besökare kommer från mobilen. Testa på en riktig telefon, inte bara ett smalt webbläsarfönster."],
+  ["warn","Har du testat felvägarna?","Fel lösenord, tomt formulär, dålig uppkoppling, dubbelklick på köpknappen. Det är där appar går sönder."],
+  ["warn","Har någon annan än du testat appen utan instruktioner?","Du vet hur appen ska användas. En ny användare gör saker du aldrig tänkt på."],
+  ["warn","Har du bett AI-verktyget granska koden efter säkerhetsbrister?","Be t.ex. Claude Code: \"Granska appen som en säkerhetsexpert och lista allvarliga brister först.\" Billigt och snabbt."],
+  ["nice","Visas begripliga felmeddelanden i stället för tekniska felkoder?","Tekniska fel kan avslöja detaljer om hur appen är byggd. Visa en vänlig text i stället."],
+  ["nice","Får du en varning om appen går ner?","Gratis övervakningstjänster kan skicka ett mejl eller en notis när sidan slutar svara."],
+  ["nice","Kan användare enkelt rapportera fel till dig?","En synlig kontaktadress eller ett formulär gör att du hör om problem innan de växer."]
+ ]}
+];
+const W={crit:3,warn:2,nice:1};
+const SEVNAME={crit:"Stoppunkt",warn:"Viktig",nice:"Bra att ha"};
+const ITEMS=[];GROUPS.forEach((g,gi)=>g.items.forEach((it,ii)=>ITEMS.push({id:`q${gi}_${ii}`,sev:it[0],q:it[1],why:it[2],g:gi})));
+let ans={};try{ans=JSON.parse(localStorage.getItem("lk-ans")||"{}")||{}}catch(e){ans={}}
+function save(){try{localStorage.setItem("lk-ans",JSON.stringify(ans))}catch(e){}}
+
+const list=document.getElementById("list");
+GROUPS.forEach((g,gi)=>{
+  const s=document.createElement("section");s.className="group";
+  s.innerHTML=`<h2>${g.name}<small id="gc${gi}"></small></h2>`;
+  ITEMS.filter(i=>i.g===gi).forEach(i=>{
+    const d=document.createElement("div");d.className=`item sev-${i.sev}`;
+    d.innerHTML=`<p class="q" id="${i.id}-q">${i.q}</p><p class="why">${i.why}</p>
+    <div class="ans" role="group" aria-labelledby="${i.id}-q">
+      <button type="button" id="${i.id}-y" class="yes" data-v="y">Ja</button>
+      <button type="button" id="${i.id}-n" class="no" data-v="n">Nej</button>
+      <button type="button" id="${i.id}-d" class="dk" data-v="d">Vet ej</button></div>`;
+    d.querySelectorAll("button").forEach(b=>b.addEventListener("click",()=>{
+      ans[i.id]=ans[i.id]===b.dataset.v?undefined:b.dataset.v;if(!ans[i.id])delete ans[i.id];save();render()}));
+    s.appendChild(d);
+  });
+  list.appendChild(s);
+});
+
+function render(){
+  let max=0,got=0,answered=0;const missing=[];
+  ITEMS.forEach(i=>{
+    max+=W[i.sev];const v=ans[i.id];if(v)answered++;
+    if(v==="y")got+=W[i.sev];else if(v)missing.push(i);
+    ["y","n","d"].forEach(k=>document.getElementById(`${i.id}-${k}`).setAttribute("aria-pressed",v===k?"true":"false"));
+  });
+  GROUPS.forEach((g,gi)=>{const its=ITEMS.filter(i=>i.g===gi);document.getElementById("gc"+gi).textContent=`${its.filter(i=>ans[i.id]==="y").length}/${its.length} klara`});
+  const pct=Math.round(got/max*100);
+  document.getElementById("score").textContent=pct+"%";
+  document.getElementById("fill").style.width=pct+"%";
+  document.getElementById("meta").textContent=`${answered} av ${ITEMS.length} besvarade`;
+  const crit=missing.filter(i=>i.sev==="crit").length;
+  const v=document.getElementById("verdict"),sum=document.getElementById("summary");
+  let col="var(--ink)";
+  if(answered===0){v.textContent="Börja svara ovanför";sum.textContent="Resultatet uppdateras medan du svarar."}
+  else{
+    const left=ITEMS.length-answered;
+    if(crit>0){v.textContent=`Inte redo: ${crit} stoppunkt${crit>1?"er":""} kvar`;col="var(--crit)"}
+    else if(left>0){v.textContent=`Inga stoppunkter hittills`;col="var(--warn)"}
+    else if(pct>=90){v.textContent="Redo att lansera";col="var(--ok)"}
+    else{v.textContent="Nästan klar";col="var(--warn)"}
+    sum.textContent=left>0?`${left} frågor kvar att besvara. Åtgärda i den här ordningen:`:(missing.length?"Åtgärda i den här ordningen:":"Alla kontrollpunkter är klara. Snyggt jobbat.");
+  }
+  v.style.color=col;
+  const order={crit:0,warn:1,nice:2};missing.sort((a,b)=>order[a.sev]-order[b.sev]);
+  const todo=document.getElementById("todo");todo.innerHTML="";
+  missing.forEach(i=>{const li=document.createElement("li");li.innerHTML=`<span class="tag t-${i.sev}">${SEVNAME[i.sev]}</span><span>${i.q}</span>`;todo.appendChild(li)});
+}
+document.getElementById("reset").addEventListener("click",()=>{ans={};save();render();window.scrollTo({top:0})});
+render();
+</script>
+</body>
+</html>
